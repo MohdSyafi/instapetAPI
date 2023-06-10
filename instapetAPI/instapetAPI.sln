@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "instapetAPI", "instapetAPI.csproj", "{40D903A1-4C20-4EC2-AC0E-414D1E66E150}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "instapetService", "..\instapetService\instapetService.csproj", "{DC8A1A8F-1270-4041-898B-94BDCF191771}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40D903A1-4C20-4EC2-AC0E-414D1E66E150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40D903A1-4C20-4EC2-AC0E-414D1E66E150}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40D903A1-4C20-4EC2-AC0E-414D1E66E150}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40D903A1-4C20-4EC2-AC0E-414D1E66E150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC8A1A8F-1270-4041-898B-94BDCF191771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC8A1A8F-1270-4041-898B-94BDCF191771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC8A1A8F-1270-4041-898B-94BDCF191771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC8A1A8F-1270-4041-898B-94BDCF191771}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F78295E-A190-40B1-96EB-DCE913AFBF86}
+	EndGlobalSection
+EndGlobal
