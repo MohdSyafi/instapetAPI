@@ -1,4 +1,6 @@
-﻿using instapetService.Services;
+﻿
+using instapetService.Models;
+using instapetService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace instapetAPI.Controllers
@@ -15,12 +17,11 @@ namespace instapetAPI.Controllers
         }
 
         [HttpPost("Authenticate")]
-        public IActionResult Authenticate([FromBody] LoginRequestModel requestModel)
+        public async Task<IActionResult> Authenticate([FromBody] User requestModel)
         {
             try
-            {
-               
-                return Ok(_LoginService.Login(requestModel.Username, requestModel.Password));
+            {      
+                return Ok(await _LoginService.Login(requestModel));
             }
             catch (Exception ex)
             {
@@ -29,10 +30,19 @@ namespace instapetAPI.Controllers
 
         }
 
-        public class LoginRequestModel
+        [HttpPost("Signup")]
+        public async Task<IActionResult>  Signup([FromBody] User requestModel)
         {
-            public string Username { get; set; }
-            public string Password { get; set; }
+            try
+            {
+                return Ok( await _LoginService.Signup(requestModel));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
+
     }
 }

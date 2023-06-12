@@ -1,5 +1,7 @@
 using instapetService.Repositories;
 using instapetService.Services;
+using instapetService.Util;
+using Microsoft.EntityFrameworkCore;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddTransient<ILoginService, LoginService>();
+builder.Services.AddDbContext<InstaPetContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("instapetDB"));
+});
 
 var app = builder.Build();
 
