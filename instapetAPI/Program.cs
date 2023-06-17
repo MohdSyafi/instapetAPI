@@ -25,8 +25,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddScoped<IPostRepo, PostRepo>();
 builder.Services.AddScoped<IImageRepo, ImageRepo>();
+builder.Services.AddScoped<ISearchRepo, SearchRepo>();
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<ISearchService, SearchService>();
 builder.Services.AddDbContext<InstaPetContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("instapetDB"));
