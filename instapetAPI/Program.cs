@@ -17,15 +17,22 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 
+ImageDirConfig config = new ImageDirConfig() { ImageDir = builder.Configuration.GetValue<string>("ImageDirectorySetting:Directory") };
+builder.Services.AddSingleton<ImageDirConfig>(config);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ILoginRepo, LoginRepo>();
+builder.Services.AddScoped<IPostRepo, PostRepo>();
+builder.Services.AddScoped<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ILoginService, LoginService>();
+builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddDbContext<InstaPetContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("instapetDB"));
 });
+
+
 
 var app = builder.Build();
 

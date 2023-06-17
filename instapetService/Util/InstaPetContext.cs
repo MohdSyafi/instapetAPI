@@ -16,5 +16,9 @@ namespace instapetService.Util
 
         }
         public DbSet<User> User { get; set; } = default!;
+
+        public DbSet<Image> Image { get; set; } = default!;
+
+        public DbSet<Post> Post { get; set; } = default!;
     }
 }
