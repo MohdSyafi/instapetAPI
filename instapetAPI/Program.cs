@@ -1,7 +1,9 @@
+using instapetService.Configs;
 using instapetService.Repositories;
 using instapetService.Services;
 using instapetService.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +19,14 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 
-ImageDirConfig config = new ImageDirConfig() { ImageDir = builder.Configuration.GetValue<string>("ImageDirectorySetting:Directory") };
-builder.Services.AddSingleton<ImageDirConfig>(config);
+AwsConfig config = new AwsConfig() 
+{ 
+    S3ImageDir = builder.Configuration.GetValue<string>("AWSConfig:Directory"),
+    accessKey = builder.Configuration.GetValue<string>("AWSConfig:AccessKey"),
+    accessSecret = builder.Configuration.GetValue<string>("AWSConfig:AccessSecretKey"),
+    S3Bucket = builder.Configuration.GetValue<string>("AWSConfig:S3BucketName"),
+};
+builder.Services.AddSingleton<AwsConfig>(config);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -31,7 +39,8 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<ISearchService, SearchService>();
 builder.Services.AddDbContext<InstaPetContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("instapetDB"));
+    var conn = builder.Configuration.GetConnectionString("instapetDB");
+    options.UseMySql(conn, ServerVersion.AutoDetect(conn));
 });
 
 

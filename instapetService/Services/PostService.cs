@@ -1,4 +1,7 @@
-﻿using instapetService.Models;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using instapetService.Configs;
+using instapetService.Models;
 using instapetService.Repositories;
 using instapetService.ServiceModel;
 using System;
@@ -17,22 +20,19 @@ namespace instapetService.Services
 
         Task<bool> AddPost(PostAndImages post);
     }
-    public class ImageDirConfig
-    {
-        public string ImageDir { get; set; }
-    }
+
 
     public class PostService : IPostService
     {
         private IPostRepo _postRepo;
         private IImageRepo _imageRepo;
-        private readonly ImageDirConfig _imageDirConfig;
+        private readonly AwsConfig _awsConfig;
 
-        public PostService(IPostRepo postRepo,IImageRepo imageRepo,ImageDirConfig config)
+        public PostService(IPostRepo postRepo,IImageRepo imageRepo, AwsConfig config)
         {
             _postRepo = postRepo;
-            _imageRepo = imageRepo; 
-            _imageDirConfig = config;
+            _imageRepo = imageRepo;
+            _awsConfig = config;
         }
 
         public async Task<bool> AddPost(PostAndImages post)
@@ -54,25 +54,47 @@ namespace instapetService.Services
 
                 List<Image> savedImages = await _imageRepo.GetImages(postId);
 
-                var imageDir = _imageDirConfig.ImageDir + $"post-{postId}/";
+                var imageDir = _awsConfig.S3ImageDir + $"post-{postId}/";
 
-                if (!Directory.Exists(imageDir))
-                {
-                    Directory.CreateDirectory(imageDir);
-                }
+                var client = new AmazonS3Client(_awsConfig.accessKey, _awsConfig.accessSecret, Amazon.RegionEndpoint.APSoutheast1);
 
                 foreach (var image in savedImages)
                 {
-                    string path = Path.Combine(Directory.GetCurrentDirectory(),imageDir, image.Name.ToString());
+                    var fileForm = post.formFiles.Select(x => x).Where(x => x.FileName == image.Name).FirstOrDefault();
 
-                    using (Stream stream = new FileStream(path, FileMode.Create))
+                    if (fileForm == null)
+                        continue;
+
+                    byte[] fileBytes = new byte[fileForm.Length];
+                    fileForm.OpenReadStream().Read(fileBytes,0,Int32.Parse(fileForm.Length.ToString()));
+
+                    var fileName = fileForm.FileName;
+                    var bucketPath = _awsConfig.S3Bucket;
+                    PutObjectResponse response = null;
+
+                    using(var stream = new MemoryStream(fileBytes))
                     {
-                        var fileForm = post.formFiles.Select(x => x).Where(x => x.FileName == image.Name).FirstOrDefault();
+                        var request = new PutObjectRequest
+                        {
+                            BucketName = bucketPath,
+                            Key = fileName,
+                            InputStream = stream,
+                            ContentType = fileForm.ContentType
+                        };
 
-                        if (fileForm != null)
-                            await fileForm.CopyToAsync(stream);
+                        response = await client.PutObjectAsync(request);
                     }
+
+                    if(response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        return true;
+
+                    }
+                    else
+                        return false;
+
                 }
+
 
                 return result;
 
