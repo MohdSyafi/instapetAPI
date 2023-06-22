@@ -16,9 +16,9 @@ namespace instapetAPI.Controllers
         }
 
         [HttpPost("SearchUser")]
-        public async Task<IActionResult> SearchUser( string input)
+        public async Task<IActionResult> SearchUser( string input,int UserId)
         {
-            return Ok( await _searchService.SearchUser(input));
+            return Ok( await _searchService.SearchUser(input,UserId));
         }
     }
 }

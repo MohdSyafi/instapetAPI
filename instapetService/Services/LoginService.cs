@@ -1,4 +1,5 @@
-﻿using instapetService.Models;
+﻿using Amazon.Runtime;
+using instapetService.Models;
 using instapetService.Repositories;
 using instapetService.ServiceModel;
 using System;
@@ -12,7 +13,7 @@ namespace instapetService.Services
 
     public interface ILoginService
     {
-        Task<bool> Login(User InputUser);
+        Task<LoginResult> Login(User InputUser);
 
         Task<SignupResult> Signup(User user);
     }
@@ -26,17 +27,17 @@ namespace instapetService.Services
             _loginRepo = loginRepo;
         }
 
-        public async Task<bool>  Login(User InputUser)
+        public async Task<LoginResult>  Login(User InputUser)
         {
             var user =  await _loginRepo.GetUser(InputUser.Username);
 
-            if (user == null)           
-                return false;
-                        
-            if(user.Password != InputUser.Password)
-                return false;
+            if (user == null)
+                return new LoginResult() { IsAuthenticated = false, UserId = 0 };
 
-            return true;
+            if (user.Password != InputUser.Password)
+                return new LoginResult() { IsAuthenticated = false, UserId = 0 };
+
+            return new LoginResult() { IsAuthenticated = true, UserId = user.Id};
         }
 
         public async Task<SignupResult> Signup(User user)

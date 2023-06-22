@@ -1,4 +1,5 @@
 ﻿using instapetService.Models;
+using instapetService.ServiceModel;
 using instapetService.Util;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,7 +13,7 @@ namespace instapetService.Repositories
 
     public interface ISearchRepo
     {
-        Task<List<User>> SearchUser(string input);
+        Task<List<SearchResult>> SearchUser(string input, int userId);
     }
     public class SearchRepo : ISearchRepo
     {
@@ -24,9 +25,22 @@ namespace instapetService.Repositories
             _db = db;
         }
 
-        public async Task<List<User>> SearchUser(string input)
+        public async Task<List<SearchResult>> SearchUser(string input,int userId)
         {
-            return await _db.User.Where(x=>x.Username.Contains(input)).ToListAsync();
+            var searchResults = await (from user in _db.User
+                                       join follow in _db.Follow
+                                            on user.Id equals follow.UserId into followGroup
+                                       from fg in followGroup.DefaultIfEmpty()
+                                       where user.Username.Contains(input) && user.Id != userId
+                                       select new SearchResult
+                                       {
+                                           Username = user.Username,
+                                           UserId = user.Id,
+                                           Followed = fg != null && fg.FollowerId == userId
+                                       })
+                                         .ToListAsync();
+
+            return searchResults;
         }
     }
 }

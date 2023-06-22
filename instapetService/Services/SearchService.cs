@@ -1,5 +1,6 @@
 ﻿using instapetService.Models;
 using instapetService.Repositories;
+using instapetService.ServiceModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace instapetService.Services
 {
     public interface ISearchService
     {
-        Task<List<User>> SearchUser(string input);
+        Task<List<SearchResult>> SearchUser(string input, int UserId);
     }
 
     public class SearchService : ISearchService
@@ -22,9 +23,9 @@ namespace instapetService.Services
             _searchRepo = searchRepo;
        }
 
-        public async Task<List<User>> SearchUser(string input)
+        public async Task<List<SearchResult>> SearchUser(string input,int UserId)
         {
-            return await _searchRepo.SearchUser(input);
+            return await _searchRepo.SearchUser(input,UserId);
         }
     }
 }
