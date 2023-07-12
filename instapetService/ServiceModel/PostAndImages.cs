@@ -11,6 +11,7 @@ namespace instapetService.ServiceModel
 {
     public class PostAndImages : Post
     {
+        public string userName { get; set; } = string.Empty;
         public List<IFormFile>? formFiles { get; set; }
         public List<Image> images { get; set; } = new List<Image>();
     }

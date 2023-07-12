@@ -16,6 +16,12 @@ namespace instapetAPI.Controllers
             _postService = postService;
         }
 
+        [HttpGet("GetPosts")]
+        public async Task<IActionResult> GetPosts(int userId)
+        {
+            return Ok(await _postService.GetPosts(userId));
+        }
+
         [HttpPost("AddPost")]
         public async Task<IActionResult> AddPost([FromForm] PostAndImages post)
         {

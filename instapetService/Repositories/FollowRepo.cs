@@ -1,5 +1,6 @@
 ﻿using instapetService.Models;
 using instapetService.Util;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,9 +68,11 @@ namespace instapetService.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<int>> GetFollowing(int userId)
+        public async Task<List<int>> GetFollowing(int userId)
         {
-            throw new NotImplementedException();
+            var followerList = await _db.Follow.Where(x => x.FollowerId == userId).Select(x => x.UserId).ToListAsync();
+
+            return followerList;
         }
 
 

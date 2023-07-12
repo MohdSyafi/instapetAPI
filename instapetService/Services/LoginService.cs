@@ -42,15 +42,24 @@ namespace instapetService.Services
 
         public async Task<SignupResult> Signup(User user)
         {
-            var userExist = await _loginRepo.GetUser(user.Username);
+            try
+            {
+                var userExist = await _loginRepo.GetUser(user.Username);
 
-            if (userExist != null)
-                return new SignupResult("user already exist", false);
+                if (userExist != null)
+                    return new SignupResult("user already exist", false);
 
-            var isAddSucces = await _loginRepo.AddUser(user);
+                var isAddSucces = await _loginRepo.AddUser(user);
 
-            if (!isAddSucces)
-                return new SignupResult("unexpected error when adding user",false);
+                if (!isAddSucces)
+                    return new SignupResult("unexpected error when adding user", false);
+
+            }
+            catch(Exception ex)
+            {
+                return new SignupResult(ex.ToString(), false);
+            }
+
 
             return new SignupResult();
 
