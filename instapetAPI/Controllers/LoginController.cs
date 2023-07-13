@@ -1,6 +1,6 @@
 ﻿
+using instapetService.Interfaces;
 using instapetService.Models;
-using instapetService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace instapetAPI.Controllers

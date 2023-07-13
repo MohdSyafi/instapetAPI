@@ -1,22 +1,12 @@
 ﻿using Amazon.Runtime;
+using instapetService.Interfaces;
 using instapetService.Models;
 using instapetService.Repositories;
 using instapetService.ServiceModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace instapetService.Services
 {
-
-    public interface ILoginService
-    {
-        Task<LoginResult> Login(User InputUser);
-
-        Task<SignupResult> Signup(User user);
-    }
 
     public class LoginService : ILoginService
     {

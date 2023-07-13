@@ -1,4 +1,5 @@
-﻿using instapetService.Models;
+﻿using instapetService.Interfaces;
+using instapetService.Models;
 using instapetService.Util;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,15 +11,6 @@ using System.Threading.Tasks;
 namespace instapetService.Repositories
 {
 
-    public interface IPostRepo
-    {
-        Task<List<Post>> GetPosts(int UserId);
-
-        Task<List<Post>> GetPosts(List<int> FollowedUsersList);
-
-        Task<int> AddPost(Post post);
-    }
-
     public class PostRepo : IPostRepo
     {
         public readonly InstaPetContext _db;
@@ -28,17 +20,11 @@ namespace instapetService.Repositories
         }
         public async Task<int> AddPost(Post post)
         {
-            try
-            {
-                await _db.Post.AddAsync(post);
-                await _db.SaveChangesAsync();
-                return post.PostId;
+            
+            await _db.Post.AddAsync(post);
+            await _db.SaveChangesAsync();
+            return post.PostId;
 
-            }
-            catch (Exception ex)
-            {
-                return 0;
-            }
         }
 
         public async Task<List<Post>> GetPosts(int UserId)

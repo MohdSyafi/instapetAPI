@@ -1,7 +1,7 @@
-﻿using instapetService.ServiceModel;
-using instapetService.Services;
+﻿using instapetService.Interfaces;
+using instapetService.ServiceModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
+
 
 namespace instapetAPI.Controllers
 {

@@ -1,22 +1,11 @@
-﻿using instapetService.Models;
+﻿using instapetService.Interfaces;
+using instapetService.Models;
 using instapetService.Util;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace instapetService.Repositories
 {
   
-    public interface ILoginRepo
-    {
-
-        Task<User> GetUser(string searchInput);
-
-        Task<bool> AddUser(User user);
-    }
     public class LoginRepo : ILoginRepo
     {
         private readonly InstaPetContext _db;
@@ -34,25 +23,17 @@ namespace instapetService.Repositories
 
                 var res = await query.FirstOrDefaultAsync();
 
-                return res;
+                return res??new User();
             }
                
             return new User();
         }
 
         public async Task<bool> AddUser(User user)
-        {
-            try
-            {
-
-                await _db.User.AddAsync(user);
-                await _db.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+        {       
+            await _db.User.AddAsync(user);
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -1,18 +1,11 @@
-﻿using instapetService.Models;
+﻿using instapetService.Interfaces;
 using instapetService.Repositories;
 using instapetService.ServiceModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace instapetService.Services
 {
-    public interface ISearchService
-    {
-        Task<List<SearchResult>> SearchUser(string input, int UserId);
-    }
+
 
     public class SearchService : ISearchService
     {

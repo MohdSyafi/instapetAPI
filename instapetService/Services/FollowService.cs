@@ -1,17 +1,9 @@
-﻿using instapetService.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using instapetService.Interfaces;
+using instapetService.Repositories;
 
 namespace instapetService.Services
 {
-    public interface IFollowService
-    {
-        Task<bool> FollowUser(int userId, int userIdToFollow);
-        Task<bool> UnFollowUser(int userId, int userIdToUnFollow);
-    }
+
     public class FollowService : IFollowService
     {
         public readonly IFollowRepo _followRepo;

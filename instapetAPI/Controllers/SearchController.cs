@@ -1,4 +1,4 @@
-﻿using instapetService.Services;
+﻿using instapetService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace instapetAPI.Controllers

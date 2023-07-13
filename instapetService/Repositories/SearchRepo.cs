@@ -1,22 +1,11 @@
-﻿using instapetService.Models;
+﻿using instapetService.Interfaces;
 using instapetService.ServiceModel;
 using instapetService.Util;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace instapetService.Repositories
 {
 
-    public interface ISearchRepo
-    {
-        Task<List<SearchResult>> SearchUser(string input, int userId);
-
-        Task<List<SearchResult>> SearchUserMultiple(List<int> userId);
-    }
     public class SearchRepo : ISearchRepo
     {
 

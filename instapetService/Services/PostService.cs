@@ -1,26 +1,14 @@
-﻿using Amazon.S3;
+﻿
+using Amazon.S3;
 using Amazon.S3.Model;
 using instapetService.Configs;
+using instapetService.Interfaces;
 using instapetService.Models;
-using instapetService.Repositories;
 using instapetService.ServiceModel;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace instapetService.Services
 {
-
-    public interface IPostService
-    {
-        Task<List<PostAndImages>> GetPosts(int userId);
-
-        Task<bool> AddPost(PostAndImages post);
-    }
-
 
     public class PostService : IPostService
     {
@@ -30,77 +18,72 @@ namespace instapetService.Services
         private ISearchRepo _searchRepo;
         private readonly AwsConfig _awsConfig;
 
-        public PostService(IPostRepo postRepo,IImageRepo imageRepo, AwsConfig config, IFollowRepo followRepo, ISearchRepo searchRepo)
+        public PostService(IPostRepo postRepo,IImageRepo imageRepo, IOptions<AwsConfig> config, IFollowRepo followRepo, ISearchRepo searchRepo)
         {
             _postRepo = postRepo;
             _imageRepo = imageRepo;
-            _awsConfig = config;
+            _awsConfig = config.Value;
             _followRepo = followRepo;
             _searchRepo = searchRepo;
         }
 
         public async Task<bool> AddPost(PostAndImages post)
         {
-            try
-            {
-                bool result = true;
+            
+            bool result = true;
 
-                var postId = await _postRepo.AddPost(post);
+            var postId = await _postRepo.AddPost(post);
 
-                if (post.formFiles == null)
-                    return result;
-
-                if(!post.formFiles.Any())
-                    return result;
-
-                var images = post.formFiles.Select(x => new Image { PostId = postId, Name = x.FileName }).ToList();
-                result = await _imageRepo.AddImages(images);
-
-                List<Image> savedImages = await _imageRepo.GetImages(postId);
-
-                var imageDir = _awsConfig.S3ImageDir + $"post-{postId}/";
-
-                var client = new AmazonS3Client(_awsConfig.accessKey, _awsConfig.accessSecret, Amazon.RegionEndpoint.APSoutheast1);
-
-                foreach (var image in savedImages)
-                {
-                    var fileForm = post.formFiles.Select(x => x).Where(x => x.FileName == image.Name).FirstOrDefault();
-
-                    if (fileForm == null)
-                        continue;
-
-                    byte[] fileBytes = new byte[fileForm.Length];
-                    fileForm.OpenReadStream().Read(fileBytes,0,Int32.Parse(fileForm.Length.ToString()));
-
-                    var fileName = fileForm.FileName;
-                    var bucketPath = _awsConfig.S3Bucket;
-                    PutObjectResponse response = null;
-
-                    using(var stream = new MemoryStream(fileBytes))
-                    {
-                        var request = new PutObjectRequest
-                        {
-                            BucketName = bucketPath,
-                            Key = imageDir + fileName,
-                            InputStream = stream,
-                            ContentType = fileForm.ContentType
-                        };
-
-                        response = await client.PutObjectAsync(request);
-                    }
-
-                    if(response.HttpStatusCode != System.Net.HttpStatusCode.OK)
-                        result = false;
-
-                }
-
-
+            if (post.formFiles == null)
                 return result;
 
-            }catch (Exception ex)
+            if(!post.formFiles.Any())
+                return result;
+
+            var images = post.formFiles.Select(x => new Image { PostId = postId, Name = x.FileName }).ToList();
+            result = await _imageRepo.AddImages(images);
+
+            List<Image> savedImages = await _imageRepo.GetImages(postId);
+
+            var imageDir = _awsConfig.S3ImageDir + $"post-{postId}/";
+
+            var client = new AmazonS3Client(_awsConfig.accessKey, _awsConfig.accessSecret, Amazon.RegionEndpoint.APSoutheast1);
+
+            foreach (var image in savedImages)
             {
-                return false;
+                var fileForm = post.formFiles.Select(x => x).Where(x => x.FileName == image.Name).FirstOrDefault();
+
+                if (fileForm == null)
+                    continue;
+
+                byte[] fileBytes = new byte[fileForm.Length];
+                fileForm.OpenReadStream().Read(fileBytes,0,Int32.Parse(fileForm.Length.ToString()));
+
+                var fileName = fileForm.FileName;
+                var bucketPath = _awsConfig.S3Bucket;
+                PutObjectResponse response;
+
+                using(var stream = new MemoryStream(fileBytes))
+                {
+                    var request = new PutObjectRequest
+                    {
+                        BucketName = bucketPath,
+                        Key = imageDir + fileName,
+                        InputStream = stream,
+                        ContentType = fileForm.ContentType
+                    };
+
+                    response = await client.PutObjectAsync(request);
+                }
+
+                if(response.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                    result = false;
+
             }
+
+
+            return result;
+
         }
 
         public async Task<List<PostAndImages>> GetPosts(int userId)

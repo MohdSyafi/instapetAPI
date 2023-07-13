@@ -1,4 +1,5 @@
-﻿using instapetService.Models;
+﻿using instapetService.Interfaces;
+using instapetService.Models;
 using instapetService.Util;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,12 +11,7 @@ using System.Threading.Tasks;
 namespace instapetService.Repositories
 {
 
-    public interface IImageRepo
-    {
-        Task<List<Image>> GetImages(int postId);
 
-        Task<bool> AddImages(List<Image> Images);
-    }
     public class ImageRepo : IImageRepo
     {
         private InstaPetContext _db;
@@ -23,17 +19,10 @@ namespace instapetService.Repositories
             _db = instaPetContext;
         }
         public async Task<bool> AddImages(List<Image> Images)
-        {
-            try
-            {
-                await _db.Image.AddRangeAsync(Images);
-                await _db.SaveChangesAsync();
-                return true;
-
-            }catch (Exception ex)
-            {
-                return false;
-            }
+        {          
+            await _db.Image.AddRangeAsync(Images);
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Image>> GetImages(int postId)
