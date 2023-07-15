@@ -6,5 +6,6 @@ namespace instapetService.Interfaces
     {
         Task<List<SearchResult>> SearchUser(string input, int userId);
         Task<List<SearchResult>> SearchUserMultiple(List<int> userId);
+        Task<SearchResult> SearchUser(int userId);
     }
 }

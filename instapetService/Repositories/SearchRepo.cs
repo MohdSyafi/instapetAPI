@@ -34,6 +34,15 @@ namespace instapetService.Repositories
             return searchResults;
         }
 
+        public async Task<SearchResult> SearchUser(int userId)
+        {
+            return await _db.User.Where(x => x.Id == userId).Select(x => new SearchResult()
+            {
+                UserId = x.Id,
+                Username = x.Username,
+            }).FirstOrDefaultAsync() ?? new SearchResult();
+        }
+
         public async Task<List<SearchResult>> SearchUserMultiple(List<int> userId)
         {
             var searchResults = await _db.User.Where(x => userId.Contains(x.Id)).Select(x => new SearchResult()

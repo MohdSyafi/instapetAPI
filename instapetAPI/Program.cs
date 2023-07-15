@@ -34,6 +34,7 @@ builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<ISearchService, SearchService>();
 builder.Services.AddTransient<IFollowService, FollowService>();
+builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddDbContext<InstaPetContext>(options =>
 {
     var conn = builder.Configuration.GetConnectionString("instapetDB");

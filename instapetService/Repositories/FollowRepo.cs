@@ -43,16 +43,18 @@ namespace instapetService.Repositories
             return true;
 
         }
-        public Task<List<int>> GetFollowers(int userId)
+        public async Task<List<int>> GetFollowers(int userId)
         {
-            throw new NotImplementedException();
+            var followerList = await _db.Follow.Where(x => x.UserId == userId).Select(x => x.FollowerId).ToListAsync();
+
+            return followerList;
         }
 
         public async Task<List<int>> GetFollowing(int userId)
         {
-            var followerList = await _db.Follow.Where(x => x.FollowerId == userId).Select(x => x.UserId).ToListAsync();
+            var followingList = await _db.Follow.Where(x => x.FollowerId == userId).Select(x => x.UserId).ToListAsync();
 
-            return followerList;
+            return followingList;
         }
 
 
